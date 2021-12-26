@@ -1,4 +1,3 @@
-# Call This Class Now:
 from library_fetcher import SteamLibraryFetcher
 
 your_id = '76561198119274839'
@@ -11,4 +10,3 @@ print("Steam ID : ", your_id, "\n")
 all_games.sort(key=lambda x: x.hours_played, reverse=True)
 for game in all_games:
     print(game)
-

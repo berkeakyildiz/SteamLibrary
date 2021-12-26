@@ -1,9 +1,12 @@
 import json
 
 import requests
-from steam_game import SteamGame
+
+from game_helper import GameHelper
+
 
 class SteamLibraryFetcher(object):
+
     def __init__(self):
         self.url = ''
         self.headers = {
@@ -12,6 +15,7 @@ class SteamLibraryFetcher(object):
         self.end_tag = "var rgChangingGames"
 
         self.last_data = []
+        self.game_helper = GameHelper()
 
     def send_request(self):
         try:
@@ -52,9 +56,9 @@ class SteamLibraryFetcher(object):
                         game_id = str(box['appid']).strip()
                         game_name = box['name'].strip()
                         if 'hours_forever' in box:
-                            game = SteamGame(game_id, game_name, box['hours_forever'].strip().replace(",",""))
+                            game = self.game_helper.create_new_steam_game(game_id, game_name, box['hours_forever'].strip().replace(",", ""))
                         else:
-                            game = SteamGame(game_id, game_name, 0)
+                            game = self.game_helper.create_new_steam_game(game_id, game_name, 0)
 
                         if game_name in self.last_data:
                             pass
