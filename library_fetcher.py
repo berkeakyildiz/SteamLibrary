@@ -1,7 +1,7 @@
 import json
 
 import requests
-
+from steam_game import SteamGame
 
 class SteamLibraryFetcher(object):
     def __init__(self):
@@ -11,7 +11,7 @@ class SteamLibraryFetcher(object):
         self.start_tag = "var rgGames"
         self.end_tag = "var rgChangingGames"
 
-        self.last_data = {}
+        self.last_data = []
 
     def send_request(self):
         try:
@@ -48,12 +48,18 @@ class SteamLibraryFetcher(object):
             dict_data = json.loads(get_data[1].strip().lstrip("=").rstrip(";").strip())
             try:
                 for box in dict_data:
-                    game_id = str(box['appid']).strip()
-                    game_name = box['name'].strip()
-                    if game_name in self.last_data:
-                        pass
-                    else:
-                        self.last_data[game_name] = game_id
+                    if box['app_type'] == 1:
+                        game_id = str(box['appid']).strip()
+                        game_name = box['name'].strip()
+                        if 'hours_forever' in box:
+                            game = SteamGame(game_id, game_name, box['hours_forever'].strip().replace(",",""))
+                        else:
+                            game = SteamGame(game_id, game_name, 0)
+
+                        if game_name in self.last_data:
+                            pass
+                        else:
+                            self.last_data.append(game)
             except:
                 return [False, "Format is Wrong"]
             else:
@@ -61,7 +67,7 @@ class SteamLibraryFetcher(object):
         else:
             return [False, get_data[1]]
 
-    def call_all(self, get_id):
+    def get_steam_library(self, get_id):
         if get_id.strip() == "":
             return "Please Insert Your Steam ID"
         else:

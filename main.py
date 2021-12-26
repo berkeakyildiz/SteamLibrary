@@ -4,15 +4,11 @@ from library_fetcher import SteamLibraryFetcher
 your_id = '76561198119274839'
 
 make_object = SteamLibraryFetcher()
-get_result = make_object.call_all(your_id)
+all_games = make_object.get_steam_library(your_id)
 
-if isinstance(get_result, dict):
+print("Steam ID : ", your_id, "\n")
 
-    print("Dict Format : ", get_result, "\n")
-    print("Target ID : ", your_id, "\n")
+all_games.sort(key=lambda x: x.hours_played, reverse=True)
+for game in all_games:
+    print(game)
 
-    for names, appid in get_result.items():
-        print(names, appid)
-
-else:
-    print(get_result)
